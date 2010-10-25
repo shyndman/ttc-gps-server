@@ -1,5 +1,8 @@
 require 'rubygems'
 require 'sinatra'
+require 'json'
+require 'ttc-gps'
+require 'sequel'
 require 'environment'
 
 configure do
@@ -18,5 +21,31 @@ end
 
 # root page
 get '/' do
-  haml :root
+  html "#{settings.views}/index.html"
+end
+
+# returns the closest routes to the position as JSON
+get '/closest_routes/:lat/:lng' do
+  user_location = GeoKit::LatLng.new(Float(params[:lat]), Float(params[:lng]))
+  
+  db = TTC::Database.new(settings.database_url)
+  routes = db.get_routes.find_all do |route|
+    route.contains? user_location
+  end
+  
+  content_type 'application/json'
+  routes.to_json
+end
+
+def html path
+  get_file_as_string path
+end
+
+def get_file_as_string path
+  data = ''
+  f = File.open(path, "r") 
+  f.each_line do |line|
+    data += line
+  end
+  return data
 end

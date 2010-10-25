@@ -1,0 +1,69 @@
+$content-reg-width: 800px;
+$content-small-width: 380px;
+$title-font-family: 'Lobster', arial, serif;
+
+body {
+	font-size: 15px;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+h1 {
+	font-size: 4em;
+	font-family: $title-font-family;
+	text-align: center;
+	margin-bottom: .2em;
+	text-shadow: #F6F6F6 0px 1px 1px;
+}
+
+p {
+	line-height: 1.4em;
+	margin-bottom: 1em;
+}
+
+.content-centered {
+	margin: 0 auto;
+	&.reg {
+		width: $content-reg-width;
+	}
+	&.small {
+		width: $content-small-width;
+	}
+}
+
+
+#main {
+	margin-top: 100px;
+}
+
+#enter-location {
+	font-size: 26px;
+	label {
+		display: block;
+		margin-bottom: 6px;
+		text-shadow: #F6F6F6 0px 1px 1px;
+	}
+	&.disabled {
+		color: #858585;
+	}
+}
+
+#thinking {
+	vertical-align: middle;
+}
+
+.whisper {
+	font-size: 13px;
+	color: #AAA;
+}
+
+#route-list ul {
+	list-style-type: none;
+	margin-left: 0;
+}
+
+.route-list-item {
+	font-size: 18px;
+	font-weight: bold;
+	text-shadow: #F6F6F6 0px 1px 1px;
+	width: $content-reg-width;
+}

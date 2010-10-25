@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+	<meta charset="utf-8">
+	<!--[if IE]><![endif]-->
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Avoid The Cold</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;">
+	<link rel="shortcut icon" href="/favicon.ico">
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+	<link rel="stylesheet" href="/css/style.css?v=1">
+	<link rel="stylesheet" media="handheld" href="/css/handheld.css?v=1">
+	<link href='http://fonts.googleapis.com/css?family=Lobster&subset=latin' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="/css/site.css?v=1">
+	<script src="/js/modernizr-1.5.min.js"></script>
+</head>
+<!--[if lt IE 7 ]> <body class="ie6"> <![endif]-->
+<!--[if IE 7 ]>		<body class="ie7"> <![endif]-->
+<!--[if IE 8 ]>		<body class="ie8"> <![endif]-->
+<!--[if IE 9 ]>		<body class="ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <body> <!--<![endif]-->
+
+	<div id="container">
+		<header>
+			<div class="content-centered reg">
+				<h1>Avoid The Cold</h1>
+				<p>
+				<em>Avoid The Cold</em> pulls Toronto Transit Commission streetcar GPS data so you can make
+				a good decision about when to leave home (thus avoiding the cold). It's only a 
+				tech demo, so be nice to it, and expect it to break the moment you rely on it.
+				</p> 
+				<p>
+				If you find a problem, please
+				email <a href="mailto:scotty.hyndman@gmail.com" class="mail">scotty.hyndman@gmail.com</a>.
+				</p>
+			</div>
+		</header>
+		
+		<div id="main">
+			<div id="enter-location" class="content-centered small">
+				<form id="enter-location-form">
+					<label for="user-location">Enter your location: <span class="whisper">(intersection's fine)</span></label> 
+					<input id="user-location" type="text">
+					<img id="thinking" src="/img/thinking.gif" width="32" height="32" style="display:none">
+				</form>
+			</div>
+			<div id="route-list" class="content-centered reg" style="display:none">
+				<ul>
+					<script id="route-template" type="text/x-jquery-tmpl">
+					    <li class="route-list-item">
+							<div>
+								${title}
+							</div>
+						</li>
+					</script>
+				</ul>
+			</div>
+			<div id="map" class="content-centered" style="display:none">
+				<div id="map_canvas">
+				</div>
+			</div>
+		</div>
+		
+		<footer>
+
+		</footer>
+	</div>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.js"></script>
+	<script>!window.jQuery && document.write('<script src="/js/jquery-1.4.3.min.js"><\/script>')</script>
+	<script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+	<script src="/js/script.js?v=1"></script>
+
+	<!--[if lt IE 7 ]>
+		<script src="js/dd_belatedpng.js?v=1"></script>
+	<![endif]-->
+</body>
+</html>
