@@ -24,6 +24,10 @@ get '/' do
   html "#{settings.views}/index.html"
 end
 
+get '/search' do
+  html "#{settings.views}/search.html"
+end
+
 # returns the closest routes to the position as JSON
 get '/closest_routes/:lat/:lng' do
   user_location = GeoKit::LatLng.new(Float(params[:lat]), Float(params[:lng]))

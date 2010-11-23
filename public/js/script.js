@@ -3,11 +3,11 @@ ttc = {
 		// Initialize the console
 		ttc.initConsole();
 		
-		// Load the Google map
-		$.getScript("http://maps.google.com/maps/api/js?v=3.1&sensor=true&callback=initMap");
-
-		// Event handlers
-		ttc.addInteractions();	
+		// Initialize the map
+		ttc.initMap();
+		
+		// Find the user's location
+		ttc.findLocation();
 	},
 	
 	/** Inits console functions to defaults if they don't exist. */
@@ -27,59 +27,27 @@ ttc = {
 			center: ttc.center,
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
-		var map = ttc.map = new g.Map($("#map_canvas")[0], myOptions);
+		var map = ttc.map = new g.Map($("#map-canvas")[0], myOptions);
 		
 		ttc.geocoder = new google.maps.Geocoder();
 	},
 	
-	addInteractions: function() {
-		$("#enter-location-form").submit(function() {
-			var val = $("#user-location").val();
-			if (!ttc.validateUserLocation(val)) {
-				return false;
-			}
-			
-			if (val.toLowerCase().indexOf('toronto') == -1) {
-				val += ", Toronto";
-			}
-			
-			$("#user-location").attr("disabled","disabled");
-			$("#thinking").fadeIn(500);
-			$("#enter-location").addClass("disabled");
-
-			ttc.geocoder.geocode({address: val}, ttc.onGeocode);
-
-			return false;
-		});	
-	},
-	
-	
-	validateUserLocation: function(userInput) {
-		return $.trim(userInput).length != 0;
-	},
-	
-	/** Called when we receive Google geocoding information. */
-	onGeocode: function(results, status) {
-		console.log(results);
-		
-		if (status != google.maps.GeocoderStatus.OK) {
-			alert("Something has gone horribly wrong. That something is this: \"" + status + "\"");
+	/** */
+	findLocation: function() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(ttc.onFindLocation, null);
+		} else {
+			console.error("not supported");
 		}
-		
-		var loc = results[0].geometry.location;
-		$.getJSON("/closest_routes/" + loc.lat() + "/" + loc.lng(), ttc.onClosestRoutes);
 	},
 	
-	/** Called when we receive the closest routes from the server */
-	onClosestRoutes: function(routes) {
-		console.log(routes);
-		
-		$("#enter-location").fadeOut(400, function() {
-			$("#route-list").fadeIn(400);
-		});
-		
-		// setup route list
-		$("#route-template").tmpl(routes).appendTo("#route-list > ul");
+	/** Sets the map location and zoom, and looks for streetcars */
+	onFindLocation: function(position) {
+		console.log(position);
+		var g = google.maps;
+		ttc.map.setCenter(
+			new g.LatLng(position.coords.latitude, position.coords.longitude));
+		ttc.map.setZoom(15);
 	}
 };
 
