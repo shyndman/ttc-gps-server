@@ -1,9 +1,13 @@
 require 'rubygems'
+require 'sequel'
+require 'pg'
 require 'sinatra'
 require 'json'
 require 'ttc-gps'
-require 'sequel'
-require 'environment'
+
+$LOAD_PATH << '.'
+require 'lib/environment'
+require 'lib/database'
 
 configure do
   set :views, "#{File.dirname(__FILE__)}/views"
@@ -24,10 +28,6 @@ get '/' do
   html "#{settings.views}/index.html"
 end
 
-get '/search' do
-  html "#{settings.views}/search.html"
-end
-
 # returns the closest routes to the position as JSON
 get '/closest_routes/:lat/:lng' do
   user_location = GeoKit::LatLng.new(Float(params[:lat]), Float(params[:lng]))
@@ -36,9 +36,19 @@ get '/closest_routes/:lat/:lng' do
   routes = db.get_routes.find_all do |route|
     route.contains? user_location
   end
+  db.disconnect
   
-  content_type 'application/json'
+  content_type :json
   routes.to_json
+end
+
+get '/stops' do
+  db = TTC::Database.new(settings.database_url)
+  stops = db.get_stops
+  db.disconnect
+  
+  content_type :json
+  stops.to_json
 end
 
 def html path
@@ -46,10 +56,5 @@ def html path
 end
 
 def get_file_as_string path
-  data = ''
-  f = File.open(path, "r") 
-  f.each_line do |line|
-    data += line
-  end
-  return data
+  File.open(path, "r").read
 end

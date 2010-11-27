@@ -10,12 +10,17 @@ module TTC
       @connection = Sequel.connect(url)
     end
     
+    def disconnect 
+      @connection.disconnect
+    end
+    
     def get_route_tag_to_id_map
       @connection[:routes].to_hash(:tag, :id)
     end
     
     def get_routes
       routes = []
+      
       @connection[:routes].order(:tag).all.each do |row|
         route = TTC::Route.new
         route.tag = row[:tag]
@@ -38,6 +43,28 @@ module TTC
         :ne_lat => route.bounds.ne.lat,
         :ne_lng => route.bounds.ne.lng
       )
+    end
+    
+    def get_stops route_id = nil    
+      # get the items
+      items = @connection[:stops]
+      if !route_id.nil?
+        items = items.filter(:route_id => route_id)
+      end
+      
+      stops = []
+      items.all.each do |row|
+        stop = TTC::Stop.new
+        stop.id = row[:id]
+        stop.title = row[:title]
+        stop.position = Geokit::LatLng.new(row[:lat], row[:lng])
+        stop.dir = row[:dir]
+        stop.tag = row[:tag]
+        
+        stops << stop
+      end
+      
+      stops
     end
     
     def insert_stop route_id, stop, direction
@@ -98,5 +125,17 @@ module TTC
         foreign_key :route_id, :routes, :key => :id
       end
     end
+  end
+end
+
+if __FILE__ == $0
+  require 'rubygems'
+  require 'ttc-gps'
+  require 'sequel'
+  require 'pg'
+  
+  db = TTC::Database.new "postgres://postgres:1foobar1@localhost:5432/ttc-gps"
+  db.get_stops.each do |stop|
+    puts stop.inspect
   end
 end

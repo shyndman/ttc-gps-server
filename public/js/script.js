@@ -8,6 +8,9 @@ ttc = {
 		
 		// Find the user's location
 		ttc.findLocation();
+		
+		// Get the stops
+		ttc.getStops();
 	},
 	
 	/** Inits console functions to defaults if they don't exist. */
@@ -37,7 +40,7 @@ ttc = {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(ttc.onFindLocation, null);
 		} else {
-			console.error("not supported");
+			console.error("find location not supported");
 		}
 	},
 	
@@ -48,6 +51,23 @@ ttc = {
 		ttc.map.setCenter(
 			new g.LatLng(position.coords.latitude, position.coords.longitude));
 		ttc.map.setZoom(15);
+	},
+	
+	/** 
+	 * Gets stops associated with the provided route (or all of them, if null),
+	 * and places them as markers on the map.
+	 */
+	getStops: function(route) {
+		var stopsUrl = route == null ? "/stops" : "/stops/" + route
+		$.getJSON(stopsUrl, null, ttc.onGetStops);
+	},
+	
+	onGetStops: function(stops) {
+		var len = data.length;
+		for (var i = 0; i < len; i++) {
+			var stop = stops[i];
+			
+		}
 	}
 };
 
