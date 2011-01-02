@@ -18,7 +18,3 @@ namespace :db do
     db.create
   end
 end
-
-task :environment do
-  require 'environment'
-end

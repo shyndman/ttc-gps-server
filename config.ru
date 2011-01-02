@@ -1,4 +1,4 @@
-require 'application'
+require 'ttc-server'
 
 set :run, false
 set :environment, :production
