@@ -1,4 +1,9 @@
 ttc = {
+	/** An array of stop markers currently on the map. */
+	stopMarkers: [],
+	
+	markerColours: ["blue", "lime", "green", "orange", "purple", "red", "greeny_blue"],
+	
 	init: function() {
 		// Initialize the console
 		ttc.initConsole();
@@ -8,9 +13,6 @@ ttc = {
 		
 		// Find the user's location
 		ttc.findLocation();
-		
-		// Get the stops
-		ttc.getStops();
 	},
 	
 	/** Inits console functions to defaults if they don't exist. */
@@ -24,7 +26,11 @@ ttc = {
 	
 	initMap: function() {
 		var g = google.maps;
+		
+		// Toronto center
 		ttc.center = new g.LatLng(43.65818115533737, -79.40809807006838);
+		
+		// Construct map
 		var myOptions = {
 			zoom: 13,
 			center: ttc.center,
@@ -32,7 +38,15 @@ ttc = {
 		};
 		var map = ttc.map = new g.Map($("#map-canvas")[0], myOptions);
 		
+		// Add event listener for clicks
+		g.event.addListener(map, 'click', ttc.onMapClick);
+		
 		ttc.geocoder = new google.maps.Geocoder();
+	},
+	
+	/** Gets stops around the clicked position, and displays them on the map */
+	onMapClick: function(event) {
+		ttc.getAndDisplayStops(event.latLng);
 	},
 	
 	/** */
@@ -57,17 +71,42 @@ ttc = {
 	 * Gets stops associated with the provided route (or all of them, if null),
 	 * and places them as markers on the map.
 	 */
-	getStops: function(route) {
-		var stopsUrl = route == null ? "/stops" : "/stops/" + route
-		$.getJSON(stopsUrl, null, ttc.onGetStops);
+	getAndDisplayStops: function(latLng) {
+		$.getJSON("/closest_stops?lat=" + latLng.lat() + "&lng=" + latLng.lng(), null, ttc.onGetStops);
 	},
 	
+	/** Removes previous markers, then adds the new ones. */
 	onGetStops: function(stops) {
-		var len = data.length;
+		ttc.removeStopMarkers();
+		ttc.addStopMarkers(stops);
+	},
+	
+	/** Adds markers for each of the provided stops */
+	addStopMarkers: function(stops) {
+		var g = google.maps;
+		
+		var len = stops.length;
 		for (var i = 0; i < len; i++) {
 			var stop = stops[i];
+			var position = stop.position;
+			var latlng = new g.LatLng(position.lat, position.lng);
 			
+			var colour = ttc.markerColours[stop.routeId % ttc.markerColours.length];
+			var marker = new g.Marker({icon: "/img/marker_sprite_" + colour + ".png"});
+			marker.setMap(ttc.map);
+			marker.setPosition(latlng);
+			
+			ttc.stopMarkers.push(marker);
 		}
+	},
+	
+	removeStopMarkers: function() {
+		var len = ttc.stopMarkers.length;
+		for (var i = 0; i < len; i++) {
+			ttc.stopMarkers[i].setMap(null);
+		}
+		
+		ttc.stopMarkers = [];
 	}
 };
 

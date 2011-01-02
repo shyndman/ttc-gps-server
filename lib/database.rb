@@ -60,6 +60,7 @@ module TTC
         stop.position = Geokit::LatLng.new(row[:lat], row[:lng])
         stop.dir = row[:dir]
         stop.tag = row[:tag]
+        stop.route_id = row[:route_id]
         
         stops << stop
       end
