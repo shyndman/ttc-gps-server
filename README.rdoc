@@ -1,1 +1,8 @@
-= TTC GPS Server
+= ttc-gps-server
+
+The project is far from complete, and is lacking cohesiveness in a number of ways. 
+There are unused methods all over the place and no automated tests. This will change.
+
+=== Copyright
+
+Copyright (c) 2011 Scott Hyndman. See LICENSE for details.
