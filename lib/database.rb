@@ -80,6 +80,29 @@ module TTC
       )
     end
     
+    def get_vehicle_locations
+      items = @connection["select * from vehicle_audit where id in (
+      	select max(id) from vehicle_audit group by tag
+      )"]
+      
+      vehicles = []
+      items.all.each do |row|
+        v = TTC::Vehicle.new
+        v.id = row[:tag]
+        v.position = Geokit::LatLng.new(row[:lat], row[:lng])
+        v.heading = row[:heading]
+        v.dir = row[:dir]
+        v.ts = row[:ts]
+        
+        # the below should really reference the route tag
+        v.route = row[:route_id]
+        
+        vehicles << v
+      end
+      
+      vehicles
+    end
+    
     def insert_vehicle_audit route_id, vehicle, origin_time
       v = @connection[:vehicle_audit]
       v.insert(
@@ -115,7 +138,7 @@ module TTC
       end
       
       @connection.create_table? :vehicle_audit do
-        primary_key :id
+        primary_key :id, :type=>Bignum
         column :tag, String
         column :lat, Float
         column :lng, Float
@@ -124,6 +147,7 @@ module TTC
         column :secs_since_report, Integer
         column :ts, DateTime
         foreign_key :route_id, :routes, :key => :id
+        index :tag
       end
     end
   end
