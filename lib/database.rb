@@ -80,11 +80,21 @@ module TTC
       )
     end
     
-    def get_vehicle_locations
-      items = @connection["select * from vehicle_audit where id in (
-      	select max(id) from vehicle_audit group by tag
-      )"]
+    def get_vehicle_locations route=nil
       
+      # the queries below could be optimized by having the daemon perform two inserts.
+      # one into the vehicle_audit table, and another into vehicle_audit_latest. the
+      # query below would just select from the latest table, so the group by would
+      # be unnecessary
+      
+      items = route.nil? \
+        ? @connection["select * from vehicle_audit where id in (
+      	    select max(id) from vehicle_audit group by tag
+          )"]
+        : @connection["select * from vehicle_audit where route_id=? and id in (
+          	select max(id) from vehicle_audit group by tag
+          )", route]
+                  
       vehicles = []
       items.all.each do |row|
         v = TTC::Vehicle.new
@@ -93,9 +103,7 @@ module TTC
         v.heading = row[:heading]
         v.dir = row[:dir]
         v.ts = row[:ts]
-        
-        # the below should really reference the route tag
-        v.route = row[:route_id]
+        v.routeId = row[:route_id]
         
         vehicles << v
       end

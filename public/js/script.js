@@ -1,6 +1,7 @@
 ttc = {
 	/** An array of stop markers currently on the map. */
 	stopMarkers: [],
+	vehicleMarkers: [],
 	
 	markerColours: ["blue", "lime", "green", "orange", "purple", "red", "greeny_blue"],
 	
@@ -11,7 +12,7 @@ ttc = {
 		// Initialize the map
 		ttc.initMap();
 		
-		// Find the user's location
+		// Find location of computer
 		ttc.findLocation();
 	},
 	
@@ -46,7 +47,8 @@ ttc = {
 	
 	/** Gets stops around the clicked position, and displays them on the map */
 	onMapClick: function(event) {
-		ttc.getAndDisplayStops(event.latLng);
+//		ttc.getAndDisplayStops(event.latLng);
+		ttc.getAndDisplayVehicles(event.latLng);
 	},
 	
 	/** */
@@ -60,55 +62,88 @@ ttc = {
 	
 	/** Sets the map location and zoom, and looks for streetcars */
 	onFindLocation: function(position) {
-		console.log(position);
+		ttc.getAndDisplayStops(position.coords);
+/*		console.log(position);
 		var g = google.maps;
 		ttc.map.setCenter(
 			new g.LatLng(position.coords.latitude, position.coords.longitude));
-		ttc.map.setZoom(15);
+		ttc.map.setZoom(15); */
 	},
 	
 	/** 
-	 * Gets stops associated with the provided route (or all of them, if null),
-	 * and places them as markers on the map.
+	 * Gets stops near the provided location and places them as markers on the map.
 	 */
 	getAndDisplayStops: function(latLng) {
-		$.getJSON("/closest_stops?lat=" + latLng.lat() + "&lng=" + latLng.lng(), null, ttc.onGetStops);
+		$.getJSON("/stops?lat=" + latLng.lat() + "&lng=" + latLng.lng(), null, function(stops) {
+			console.log("stops received");
+			ttc.removeMarkers(ttc.stopMarkers);
+			ttc.addMarkers(stops, ttc.stopMarkers, ttc.onStopClick);
+		});
 	},
 	
-	/** Removes previous markers, then adds the new ones. */
-	onGetStops: function(stops) {
-		ttc.removeStopMarkers();
-		ttc.addStopMarkers(stops);
+	/** Opens an info window describing the stop. */
+	onStopClick: function(event, stop, marker) {
+		console.log("stop clicked");
+		var infowindow = new google.maps.InfoWindow({
+		    content: stop.title
+		});
 	},
 	
-	/** Adds markers for each of the provided stops */
-	addStopMarkers: function(stops) {
+	/** 
+	 * Gets vehicles near the provided location and places them as markers on the map.
+	 */
+	getAndDisplayVehicles: function(latLng) {
+		$.getJSON("/vehicles?lat=" + latLng.lat() + "&lng=" + latLng.lng(), null, function(vehicles) {
+			console.log("vehicles received");
+			ttc.removeMarkers(ttc.vehicleMarkers);
+			ttc.addMarkers(vehicles, ttc.vehicleMarkers);
+		});
+	},
+	
+	/* === MARKER MANAGEMENT === */
+	
+	/** 
+	 * Adds markers to the map as specified by the markables array. Each generated
+	 * marker is added to the provided markers array.
+	 *
+	 * If an onClick function is supplied, it will be called when the marker is clicked.
+	 * The function should have the following signiture:
+	 *
+	 *		function(event, markable, marker)
+	 */
+	addMarkers: function(markables, markers, onClick) {
 		var g = google.maps;
 		
-		var len = stops.length;
+		var len = markables.length;
 		for (var i = 0; i < len; i++) {
-			var stop = stops[i];
-			var position = stop.position;
+			var markable = markables[i];
+			var position = markable.position;
 			var latlng = new g.LatLng(position.lat, position.lng);
 			
-			var colour = ttc.markerColours[stop.routeId % ttc.markerColours.length];
+			var colour = ttc.markerColours[markable.routeId % ttc.markerColours.length];
 			var marker = new g.Marker({icon: "/img/marker_sprite_" + colour + ".png"});
 			marker.setMap(ttc.map);
 			marker.setPosition(latlng);
 			
-			ttc.stopMarkers.push(marker);
+			if (onClick != null) {
+				g.event.addListener(marker, 'click', function(event) {
+					onClick(event, markable, marker);
+				});
+			}
+			
+			markers.push(marker);
 		}
 	},
 	
-	removeStopMarkers: function() {
-		var len = ttc.stopMarkers.length;
+	/** Remove all markers in the provided array from the map */
+	removeMarkers: function(markers) {
+		var len = markers.length;
 		for (var i = 0; i < len; i++) {
-			ttc.stopMarkers[i].setMap(null);
+			markers[i].setMap(null);
 		}
 		
-		ttc.stopMarkers = [];
+		markers.splice(0, markers.length); // clear the markers array
 	}
 };
 
-window.initMap = ttc.initMap;
 $(ttc.init);

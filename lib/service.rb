@@ -1,10 +1,11 @@
 #
-# gets vehicles closest to the specified point
+# gets vehicles closest to the specified point. if route is specified,
+# only vehicles on that route will be considered.
 #
-def get_closest_vehicles latlng, cnt=10
+def get_closest_vehicles latlng, route=nil, cnt=10
   begin
     db = TTC::Database.new($database_url)
-    vehicles = db.get_vehicle_locations
+    vehicles = db.get_vehicle_locations route
   
     vehicles.sort! do |a, b|
       latlng.distance_to(a.position) <=> latlng.distance_to(b.position)
