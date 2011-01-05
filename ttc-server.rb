@@ -7,7 +7,7 @@ require 'json'
 require 'ttc-gps'
 
 # local stuff
-$LOAD_PATH << '.'
+$LOAD_PATH << File.dirname(__FILE__)
 require 'lib/setup'
 require 'lib/database'
 require 'lib/util'
