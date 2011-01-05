@@ -68,7 +68,10 @@ ttc = {
 	
 	/** Sets the map location and zoom, and looks for streetcars */
 	onFindLocation: function(position) {
-		ttc.getAndDisplayStops({lat: position.coords.latitude, lng: position.coords.longitude});
+		ttc.getAndDisplayStops({
+			lat: function() { return position.coords.latitude; }, 
+			lng: function() { return position.coords.longitude; }
+		});
 /*		console.log(position);
 		var g = google.maps;
 		ttc.map.setCenter(
