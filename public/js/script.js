@@ -25,13 +25,7 @@ ttc = {
 		if (!console.groupEnd) console.groupEnd = $.noop;	
 	},
 	
-	initMap: function() {
-		// Set full screen for phones.
-		var userAgent = navigator.userAgent;
-		if (userAgent.indexOf('iPhone') != -1 || userAgent.indexOf('Android') != -1 ) {
-			$("#map-canvas").width("100%").height("100%");
-		}
-		
+	initMap: function() {	
 		var g = google.maps;
 		
 		// Toronto center
