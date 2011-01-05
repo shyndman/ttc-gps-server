@@ -42,7 +42,7 @@ class AvoidTheCold < Sinatra::Base
     user_location = GeoKit::LatLng.new(Float(params[:lat]), Float(params[:lng]))
   
     content_type :json
-    get_closest_vehicles(user_location, nil, 1000).to_json
+    get_closest_vehicles(user_location, nil, 10).to_json
   end
   
   

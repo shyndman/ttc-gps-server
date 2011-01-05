@@ -28,11 +28,11 @@ tags_to_ids.keys.each do |tag|
         puts "Error occurred, route=#{myTag} error=#{$!}"
       end
     
-      sleep(8)
+      sleep(2)
     end  
   end
   
-  sleep (8.0 / tags_to_ids.keys.length)
+  sleep (2.0 / tags_to_ids.keys.length)
 end
 
 sleep # sleep forever
