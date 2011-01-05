@@ -157,6 +157,19 @@ module TTC
         foreign_key :route_id, :routes, :key => :id
         index :tag
       end
+      
+      @connection.create_table? :vehicle_audit_latest do
+        primary_key :id, :type=>Bignum
+        column :tag, String
+        column :lat, Float
+        column :lng, Float
+        column :heading, Float
+        column :dir, String
+        column :secs_since_report, Integer
+        column :ts, DateTime
+        foreign_key :route_id, :routes, :key => :id
+        index :tag
+      end
     end
   end
 end

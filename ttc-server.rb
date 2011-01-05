@@ -2,7 +2,7 @@
 require 'rubygems'
 require 'sequel'
 require 'pg'
-require 'sinatra'
+require 'sinatra/base'
 require 'json'
 require 'ttc-gps'
 
@@ -65,6 +65,15 @@ class AvoidTheCold < Sinatra::Base
     get_closest_stops(user_location).to_json
   end
   
+  
+  error do
+    if request.path == "/"
+      return html("#{settings.views}/error.html") 
+    end
+    
+    content_type :json
+    { :error => true }.to_json
+  end
 end
 
 AvoidTheCold.run! :host => 'localhost', :port => 8080
