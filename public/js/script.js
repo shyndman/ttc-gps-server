@@ -5,7 +5,7 @@ ttc = {
 	
 	markerColours: ["blue", "lime", "green", "orange", "purple", "red", "greeny_blue"],
 	
-	init: function() {
+	init: function() {		
 		// Initialize the console
 		ttc.initConsole();
 		
@@ -26,6 +26,11 @@ ttc = {
 	},
 	
 	initMap: function() {
+		// Set full screen for phones.
+		if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
+			$("#map-canvas").width("100%").height("100%");
+		}
+		
 		var g = google.maps;
 		
 		// Toronto center
@@ -38,7 +43,7 @@ ttc = {
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
 		var map = ttc.map = new g.Map($("#map-canvas")[0], myOptions);
-		
+				
 		// Add event listener for clicks
 		g.event.addListener(map, 'click', ttc.onMapClick);
 		
