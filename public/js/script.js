@@ -27,7 +27,8 @@ ttc = {
 	
 	initMap: function() {
 		// Set full screen for phones.
-		if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
+		var userAgent = navigator.userAgent;
+		if (userAgent.indexOf('iPhone') != -1 || userAgent.indexOf('Android') != -1 ) {
 			$("#map-canvas").width("100%").height("100%");
 		}
 		
