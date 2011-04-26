@@ -1,5 +1,6 @@
 # gems
-require 'rubygems'
+require "rubygems"
+require "bundler/setup"
 require 'sequel'
 require 'pg'
 require 'sinatra/base'

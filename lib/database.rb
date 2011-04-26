@@ -90,7 +90,7 @@ module TTC
       items = route.nil? \
         ? @connection["select * from vehicle_audit where id in (
       	    select max(id) from vehicle_audit group by tag
-          )"]
+          )"] 
         : @connection["select * from vehicle_audit where route_id=? and id in (
           	select max(id) from vehicle_audit group by tag
           )", route]
