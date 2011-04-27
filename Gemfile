@@ -1,3 +1,5 @@
+source :rubygems
+
 gem 'geokit',   '~> 1.5'
 gem 'ttc-gps'   #always latest (because its mine)
 
